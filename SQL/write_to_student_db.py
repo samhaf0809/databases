@@ -6,7 +6,7 @@ cursor = conn.cursor()
 
 insert_query = """
 INSERT INTO students (firstname,lastname,age,gender)
-VALUES ('Hermione','Grainger',14,'Female');
+VALUES ('Hermione','Grainger',14,'female');
 """
 parameterised_insert_query="""
 INSERT INTO students (firstname,lastname,age,gender)
