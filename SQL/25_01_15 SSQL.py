@@ -12,10 +12,5 @@ age INTEGER,
 gender TEXT
 );"""
 
-
-
-
-
 cursor.execute(create_students_table)
-
 conn.close()
