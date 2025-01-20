@@ -13,3 +13,5 @@ first_students = cursor.fetchone()
 more_students = cursor.fetchmany(10)
 other_students = cursor.fetchall()
 conn.close()
+
+print(first_students,"\n",more_students,"\n",other_students)
