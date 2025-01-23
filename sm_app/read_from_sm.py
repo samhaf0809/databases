@@ -59,8 +59,9 @@ for posts_comment in posts_comments_user:
 
 print("")
 
-cursor = connection.cursor()
-cursor.execute(select_posts_comments_user)
-cursor.fetchall()
-column_names = [description[0] for description in cursor.description]
+with sqlite3.connect("sm_app.sqlite") as conn:
+    cursor = conn.cursor()
+    cursor.execute(select_posts_comments_user)
+    cursor.fetchall()
+    column_names = [description[0] for description in cursor.description]
 print(column_names)
