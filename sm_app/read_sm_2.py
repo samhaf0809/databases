@@ -38,6 +38,7 @@ print(name_left)
 
 conn.close()
 
+
 '''
 select description
 from posts
