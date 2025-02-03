@@ -65,5 +65,5 @@ class Location(Base):
     activities: so.Mapped[list["Activity"]] = so.relationship(back_populates="location")
     room: so.Mapped[str]
 
-    def __repr__(self) -> str:
-        return f"Location(location='{self.location}')"
+#    def __repr__(self) -> str:
+#        return f"Location(location='{self.room}')"
