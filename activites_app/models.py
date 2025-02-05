@@ -62,6 +62,7 @@ class Person(Base):
 
 class Location(Base):
     __tablename__ = 'locations'
+    id: so.Mapped[int] = so.mapped_column(primary_key=True, autoincrement=True)
     activities: so.Mapped[list["Activity"]] = so.relationship(back_populates="location")
     room: so.Mapped[str]
 

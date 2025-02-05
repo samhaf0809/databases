@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from models import Person, Activity
+from models import Person, Activity, Location
 
 # Create some instances of the Person class
 people = [Person(first_name="Andrew", last_name="Dales"),
@@ -15,6 +15,13 @@ people[0].activities.append(chess)
 people[0].activities.append(fives)
 people[1].activities.append(outdoor_ed)
 people[1].activities.append(fives)
+
+# location
+chess_loc = Location(room="7")
+five_loc = Location(room="Fives court")
+outdoor_loc = Location(room="senior field")
+
+
 # Connect to the activities database
 engine = create_engine('sqlite:///activities.sqlite', echo=True)
 
