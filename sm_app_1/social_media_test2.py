@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS likes (
 );
 """
 
-with sqlite3.connect("sm_app.sqlite") as conn:
+with sqlite3.connect("sm_app_1.sqlite") as conn:
     cursor = conn.cursor()
     cursor.execute(create_users_table)
     cursor.execute(create_posts_table)

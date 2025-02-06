@@ -13,7 +13,7 @@ def execute_read_query(connection, query):
     return result
 
 select_users = "SELECT * FROM users"
-with sqlite3.connect("sm_app.sqlite") as conn:
+with sqlite3.connect("sm_app_1.sqlite") as conn:
     users = execute_read_query(conn, select_users)
 
 for user in users:
@@ -59,7 +59,7 @@ for posts_comment in posts_comments_user:
 
 print("")
 
-with sqlite3.connect("sm_app.sqlite") as conn:
+with sqlite3.connect("sm_app_1.sqlite") as conn:
     cursor = conn.cursor()
     cursor.execute(select_posts_comments_user)
     cursor.fetchall()

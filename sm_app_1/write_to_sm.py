@@ -48,7 +48,7 @@ VALUES
   (3, 6);
 """
 
-with sqlite3.connect("sm_app.sqlite") as conn:
+with sqlite3.connect("sm_app_1.sqlite") as conn:
     cursor = conn.cursor()
     cursor.execute(insert_users)
     cursor.execute(insert_posts)

@@ -1,5 +1,5 @@
 import sqlite3
-conn=sqlite3.connect("sm_app.sqlite")
+conn=sqlite3.connect("sm_app_1.sqlite")
 cursor = conn.cursor()
 
 select_posts = """
