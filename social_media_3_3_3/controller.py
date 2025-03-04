@@ -88,5 +88,27 @@ class CLI:
         if menu_choice != 'Logout':
             self.user_home()
 
+        def show_posts(self, user_name: str | None = None):
+            if user_name is None:
+                users = self.controller.get_user_names()
+                menu_choice = pyip.inputMenu(users,
+                                             prompt='Select a user\n',
+                                             numbered=True,
+                                             )
+                user_name = menu_choice
+
+            self.show_title(f"{user_name}'s Posts")
+            posts = self.controller.get_posts(user_name)
+            for post in posts:
+                print(f'Title: {post["title"]}')
+                print(f'Content: {post["description"]}')
+                print(f'Likes: {post["number_likes"]}')
+
+            if not posts:
+                print('No Posts')
+
+    # cli = CLI()
+    controller = Controller()
+
 # FINISH CODE ---------------------------------------------=-=-=-=-=_+_=0-f=0dfaudehfipoadshfasdbfasdf
 # Yelow sheet
