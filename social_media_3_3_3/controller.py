@@ -36,6 +36,19 @@ class Controller:
                           for post in user.posts]
         return posts_info
 
+    def add_post(self,p_title,p_desc):
+        with so.Session(bind=self.engine) as session:
+            user = session.merge(self.current_user)
+            post = Post(title=p_title, description=p_desc, user_id = user.id)
+            session.add(post)
+            session.commit()
+        return post
+
+    def show_comments(self):
+        with so.Session(bind=self.engine) as session:
+            #FINISH
+
+
 
 class CLI:
     def __init__(self):
@@ -79,7 +92,8 @@ class CLI:
         print(f'Nationality: {self.controller.current_user.nationality}')
         self.show_posts(self.controller.current_user.name)
         menu_items = {'Show posts from another user': self.show_posts,
-                      'Logout': self.login}
+                      'Logout': self.login,
+                      'Create a post': self.create_post,}
         menu_choice = pyip.inputMenu(list(menu_items.keys()),
                                      prompt = 'Select an action\n',
                                      numbered = True,
@@ -88,27 +102,34 @@ class CLI:
         if menu_choice != 'Logout':
             self.user_home()
 
-        def show_posts(self, user_name: str | None = None):
-            if user_name is None:
-                users = self.controller.get_user_names()
-                menu_choice = pyip.inputMenu(users,
-                                             prompt='Select a user\n',
-                                             numbered=True,
-                                             )
-                user_name = menu_choice
+    def show_posts(self, user_name: str | None = None):
+        if user_name is None:
+            users = self.controller.get_user_names()
+            menu_choice = pyip.inputMenu(users,
+                                         prompt='Select a user\n',
+                                         numbered=True,
+                                         )
+            user_name = menu_choice
 
-            self.show_title(f"{user_name}'s Posts")
-            posts = self.controller.get_posts(user_name)
-            for post in posts:
-                print(f'Title: {post["title"]}')
-                print(f'Content: {post["description"]}')
-                print(f'Likes: {post["number_likes"]}')
+        self.show_title(f"{user_name}'s Posts")
+        posts = self.controller.get_posts(user_name)
+        for post in posts:
+            print(f'Title: {post["title"]}')
+            print(f'Content: {post["description"]}')
+            print(f'Likes: {post["number_likes"]}')
 
-            if not posts:
-                print('No Posts')
+        if not posts:
+            print('No Posts')
 
-    # cli = CLI()
-    controller = Controller()
+    def create_post(self,):
+        post_title = str(input("Enter the post title: "))
+        post_description = str(input("Enter the post description: "))
+        self.controller.add_post(post_title, post_description)
 
-# FINISH CODE ---------------------------------------------=-=-=-=-=_+_=0-f=0dfaudehfipoadshfasdbfasdf
-# Yelow sheet
+    def show_post_comments(self,):
+        self.controller.show_comments()
+        #FINSIH
+
+
+cli = CLI()
+controller = Controller()
