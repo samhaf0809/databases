@@ -32,6 +32,7 @@ class Controller:
             posts_info = [{'title':post.title,
                           'description':post.description,
                            'number_likes':len(post.liked_by_users),
+                           'comments': [{'user': comment.user.name, 'comm': comment.comment} for comment in post.comments]
                            }
                           for post in user.posts]
         return posts_info
@@ -44,9 +45,13 @@ class Controller:
             session.commit()
         return post
 
-    def show_comments(self):
+    def like_post(self, user_name:str, post_title:str):
         with so.Session(bind=self.engine) as session:
-            #FINISH
+            user = session.scalars(sa.select(User).where(User.name == user_name)).one_or_none()
+            post = session.scalars(sa.select(Post).where(Post.title == post_title)).one_or_none()
+            post.liked_by_users.append(user)
+            print(f'You liked "{post_title}"')
+
 
 
 
@@ -93,7 +98,8 @@ class CLI:
         self.show_posts(self.controller.current_user.name)
         menu_items = {'Show posts from another user': self.show_posts,
                       'Logout': self.login,
-                      'Create a post': self.create_post,}
+                      'Create a post': self.create_post,
+                      }
         menu_choice = pyip.inputMenu(list(menu_items.keys()),
                                      prompt = 'Select an action\n',
                                      numbered = True,
@@ -117,18 +123,27 @@ class CLI:
             print(f'Title: {post["title"]}')
             print(f'Content: {post["description"]}')
             print(f'Likes: {post["number_likes"]}')
+            print(f'Comments: ')
+            if post["comments"]:
+                for comment in post["comments"]:
+                    print(f'  - {comment["user"]}: {comment["comm"]}')
+            else:
+                print("  --No Comments--")
 
         if not posts:
             print('No Posts')
+
+        like_post = str(input("Like this post?(y/n): "))
+        if like_post.lower() == 'y':
+            self.controller.like_post(user_name, like_post)
+
 
     def create_post(self,):
         post_title = str(input("Enter the post title: "))
         post_description = str(input("Enter the post description: "))
         self.controller.add_post(post_title, post_description)
 
-    def show_post_comments(self,):
-        self.controller.show_comments()
-        #FINSIH
+
 
 
 cli = CLI()
