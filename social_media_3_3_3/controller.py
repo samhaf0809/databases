@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 
-from models import User, Post, Comment
+from models import User, Post, Comment, likes_table
 import pyinputplus as pyip
 
 class Controller:
@@ -47,10 +47,27 @@ class Controller:
 
     def like_post(self, user_name:str, post_title:str):
         with so.Session(bind=self.engine) as session:
+
+
             user = session.scalars(sa.select(User).where(User.name == user_name)).one_or_none()
             post = session.scalars(sa.select(Post).where(Post.title == post_title)).one_or_none()
-            post.liked_by_users.append(user)
+
+
+            # post.liked_by_users.append(user)
+            # user.liked_posts.append(post)
+
+            session.execute(likes_table.insert().values(user_id=user.id, post_id=post.id))
+            session.commit()
+
+
             print(f'You liked "{post_title}"')
+
+
+        return post
+
+
+    def comment_on_post(self):
+        pass
 
 
 
@@ -127,15 +144,21 @@ class CLI:
             if post["comments"]:
                 for comment in post["comments"]:
                     print(f'  - {comment["user"]}: {comment["comm"]}')
+
             else:
                 print("  --No Comments--")
 
-        if not posts:
-            print('No Posts')
+            like_post = str(input("Like this post?(y/n): "))
+            if like_post.lower() == 'y':
+                self.controller.like_post(user_name, post["title"])
+                print(f'Likes: {post["number_likes"]}')
 
-        like_post = str(input("Like this post?(y/n): "))
-        if like_post.lower() == 'y':
-            self.controller.like_post(user_name, like_post)
+        if not posts:
+            print('  --No Posts--')
+
+
+
+
 
 
     def create_post(self,):
