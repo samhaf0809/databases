@@ -1,8 +1,9 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as so
-
-from models import User, Post, Comment, likes_table
 import pyinputplus as pyip
+
+from social_media_3_3_3.models import User, Post, Comment, likes_table
+
 
 class Controller:
     def __init__(self, db_location = 'sqlite:///social_media.db'):
@@ -55,6 +56,12 @@ class Controller:
 
             # post.liked_by_users.append(user)
             # user.liked_posts.append(post)
+
+            liked_or_not = session.scalars(sa.select(likes_table))
+
+
+
+
 
             session.execute(likes_table.insert().values(user_id=user.id, post_id=post.id))
             session.commit()
@@ -168,6 +175,6 @@ class CLI:
 
 
 
-
-cli = CLI()
-controller = Controller()
+if __name__ == '__main__':
+    cli = CLI()
+    controller = Controller()
