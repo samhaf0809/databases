@@ -33,7 +33,7 @@ class Controller:
             posts_info = [{'title':post.title,
                           'description':post.description,
                            'number_likes':len(post.liked_by_users),
-                           'comments': [{'user': comment.user.name, 'comm': comment.comment} for comment in post.comments]
+                           'comments': [{'user': comment.user.name, 'comment': comment.comment} for comment in post.comments]
                            }
                           for post in user.posts]
         return posts_info
@@ -59,10 +59,6 @@ class Controller:
 
             liked_or_not = session.scalars(sa.select(likes_table))
 
-
-
-
-
             session.execute(likes_table.insert().values(user_id=user.id, post_id=post.id))
             session.commit()
 
@@ -72,9 +68,16 @@ class Controller:
 
         return post
 
+    def comment_on_post(self, post_title: str, target_user_name: str, comment_text: str):
+        with so.Session(bind=self.engine) as session:
+            target_user = session.scalars(sa.select(User).where(User.name == target_user_name)).one_or_none()
+            post = session.scalars(sa.select(Post).where(Post.title == post_title, Post.user_id == target_user.id)).one_or_none()
 
-    def comment_on_post(self):
-        pass
+            user = session.merge(self.current_user)
+            comment = Comment(user_id=user.id, post_id=post.id, comment=comment_text)
+            session.add(comment)
+            session.commit()
+            print(f'Commented on "{post_title}": {comment_text}')
 
 
 
@@ -150,7 +153,7 @@ class CLI:
             print(f'Comments: ')
             if post["comments"]:
                 for comment in post["comments"]:
-                    print(f'  - {comment["user"]}: {comment["comm"]}')
+                    print(f'  - {comment["user"]}: {comment["comment"]}')
 
             else:
                 print("  --No Comments--")
@@ -159,6 +162,11 @@ class CLI:
             if like_post.lower() == 'y':
                 self.controller.like_post(user_name, post["title"])
                 print(f'Likes: {post["number_likes"]}')
+
+            comment_post = str(input("Comment on this post?(y/n): "))
+            if comment_post.lower()=='y':
+                comment_text = str(input("Enter your comment: "))
+                self.controller.comment_on_post(post["title"], user_name, comment_text)
 
         if not posts:
             print('  --No Posts--')

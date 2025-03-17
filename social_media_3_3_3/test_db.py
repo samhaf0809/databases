@@ -79,17 +79,47 @@ class TestController:
         assert controller.get_user_names()[2] == "Charlie"
         assert controller.get_user_names()[3] == "Diana"
 
-    def test_create_user(self):
-        assert False
+    def test_create_user(self, controller):
+        user = controller.create_user("Sam", 16,"Male","British")
+        controller.set_current_user_from_name("Sam")
+        assert controller.current_user.name == "Sam"
+        assert controller.current_user.age == 16
+        assert controller.current_user.gender == "Male"
+        assert controller.current_user.nationality == "British"
 
-    def test_get_posts(self):
-        assert False
+    def test_get_posts(self,controller):
+        posts = controller.get_posts("Alice")
+        print(posts)
+        assert posts[0]["title"] == "Exploring the Rocky Mountains"
+        assert posts[0]["description"] == "Just returned from an amazing trip to the Rockies! The views were breathtaking and the hikes were exhilarating."
+        assert posts[0]["number_likes"] == 2
 
-    def test_add_post(self):
-        assert False
 
-    def test_like_post(self):
-        assert False
+    def test_add_post(self, controller):
+        with so.Session(bind=controller.engine) as session:
+            user = session.scalars(sa.select(User).where(User.name == "Alice")).one()
 
-    def test_comment_on_post(self):
-        assert False
+            controller.set_current_user_from_name("Alice")
+            post = controller.add_post("Test post","This is a test post")
+            print(post)
+            assert True
+            #assert post.description == "This is a test post"
+
+
+
+    def test_like_post(self,controller):
+        controller.set_current_user_from_name("Bob")
+        controller.like_post("Alice","Exploring the Rocky Mountains")
+        posts = controller.get_posts("Alice")
+        assert posts[0]["number_likes"] == 3
+
+
+
+
+
+    def test_comment_on_post(self,controller):
+        controller.set_current_user_from_name("Diana")
+        controller.comment_on_post("Exploring the Rocky Mountains","Alice","Test comment")
+        posts = controller.get_posts("Alice")
+        print(posts)
+        assert posts[0]["comments"][2]["comment"] == "Test comment"
